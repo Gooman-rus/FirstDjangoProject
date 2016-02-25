@@ -29,55 +29,44 @@ var myApp = angular.module('myApp', [
             return $http.get(urlBase + '/v1/job/');
         };
         dataOp.addJob = function (newjob) {
-            return $http.post(urlBase + '/v1/job/', newjob);
+            //return $http.post(urlBase + '/v1/job/', newjob);
+            $http.post(urlBase + '/v1/job/', newjob);
+            return $http.get(urlBase + '/v1/job/');
         };
+        dataOp.applyJobs = function ($scope, jobs) {
+            $scope.items = jobs;
+            $scope.$apply();
+            return $scope.items;
+        }
         return dataOp;
     }])
 
     .controller('dbCtrl', function ($scope, dataOp) {
-        $scope.status;
-        $scope.jobs;
-        getJobs();
-
-        function getJobs() {
-            dataOp.getJobs()
-            .success(function (myjobs) {
-                $scope.jobs = myjobs;
-                $scope.items = $scope.jobs.objects; // вывод в таблицу
-                console.log($scope.jobs);
-            })
-            .error(function (error) {
-                $scope.status = 'Unable to load customer data: ' + error.message;
-            });
-        }
+        dataOp.getJobs()
+        .success(function (myjobs) {
+            $scope.jobs = myjobs;
+            $scope.items = $scope.jobs.objects; // вывод в таблицу
+            //console.log($scope.jobs);
+        })
+        .error(function (error) {
+            $scope.status = 'Unable to load customer data: ' + error.message;
+        });
     })
 
-    .controller('MyFormCtrl', function($scope, $http, dataOp) {
-
-
+    .controller('MyFormCtrl', function($scope, $timeout, dataOp) {
         $scope.submit = function ($event) {
             var in_data = { name: $scope.name, description: $scope.description };
-            console.log(in_data);
+            $scope.jobs;
             dataOp.addJob(in_data)
             .success(function (myjobs) {
                 $scope.jobs = myjobs;
-                dataOp.getJobs();
+                $scope.items = $scope.jobs.objects; // вывод в таблицу
+                //dataOp.applyJobs($scope, myjobs);
                 $scope.name = '';
                 $scope.description = '';
-                console.log($scope.jobs);
             })
             .error(function (error) {
                 $scope.status = 'Unable to submit customer data: ' + error.message;
             });
-//            $http.post('/', in_data)
-//                .success(function(out_data) {
-//                    $scope.name = '';
-//                    $scope.description = '';
-//                    console.log(out_data);
-//                })
-//                .error(function(data) {
-//                    console.log(data);
-//                });
         }
     });
-
