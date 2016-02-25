@@ -48,7 +48,7 @@ var myApp = angular.module('myApp', [
             .success(function (myjobs) {
                 //$scope.jobs = myjobs;
                 //$scope.items = $scope.jobs.objects; // вывод в таблицу
-                $scope.items = JobsDataOp.getJobs().objects;
+                $scope.items = dataOp.getJobs().objects;
                 $scope.name = '';
                 $scope.description = '';
             })
