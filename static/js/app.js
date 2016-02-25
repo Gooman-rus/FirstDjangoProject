@@ -13,47 +13,25 @@ var myApp = angular.module('myApp', [
             .state('home', {
                 url: '/',
                 cache: false,
-                templateUrl: "static/partials/home.html",
+                templateUrl: 'static/partials/home.html',
+                controller: 'JobFormCtrl'
             });
+
+        function getJobs() {
+            $scope.items = $http.get('/api/v1/job/');
+            return $scope.items;
+        };
+        function addJob(newjob) {
+            return $http.post(urlBase + '/v1/job/', newjob);
+        };
+
+        getJobs();
 
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/');
     }])
 
-    .factory('dataOp', ['$http', function ($http) {
-
-        var urlBase = '/api';
-        var dataOp = {};
-
-        dataOp.getJobs = function () {
-            return $http.get(urlBase + '/v1/job/');
-        };
-        dataOp.addJob = function (newjob) {
-            //return $http.post(urlBase + '/v1/job/', newjob);
-            $http.post(urlBase + '/v1/job/', newjob);
-            return $http.get(urlBase + '/v1/job/');
-        };
-        dataOp.applyJobs = function ($scope, jobs) {
-            $scope.items = jobs;
-            $scope.$apply();
-            return $scope.items;
-        }
-        return dataOp;
-    }])
-
-    .controller('dbCtrl', function ($scope, dataOp) {
-        dataOp.getJobs()
-        .success(function (myjobs) {
-            $scope.jobs = myjobs;
-            $scope.items = $scope.jobs.objects; // вывод в таблицу
-            //console.log($scope.jobs);
-        })
-        .error(function (error) {
-            $scope.status = 'Unable to load customer data: ' + error.message;
-        });
-    })
-
-    .controller('MyFormCtrl', function($scope, $timeout, dataOp) {
+    .controller('JobFormCtrl', function($scope, $timeout, dataOp) {
         $scope.submit = function ($event) {
             var in_data = { name: $scope.name, description: $scope.description };
             $scope.jobs;
