@@ -17,28 +17,38 @@ var myApp = angular.module('myApp', [
                 controller: 'JobFormCtrl'
             });
 
-        function getJobs() {
-            $scope.items = $http.get('/api/v1/job/');
-            return $scope.items;
-        };
-        function addJob(newjob) {
-            return $http.post('api/v1/job/', newjob);
-        };
 
-        getJobs();
 
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/');
     }])
 
-    .controller('JobFormCtrl', function($scope) {
+    .factory('dataOp', ['$http', function ($http) {
+        var urlBase = 'http://localhost:8000/api';
+        var dataOp = {};
+
+        dataOp.getJobs = function () {
+            console.log($http.get(urlBase + '/v1/job/'));
+            return $http.get(urlBase + '/v1/job/');
+        };
+        dataOp.addJob = function (newjob) {
+            return $http.post(urlBase + '/v1/job/', newjob);
+        };
+
+        return dataOp;
+    }])
+
+    .controller('JobFormCtrl', function($scope, dataOp) {
+        var temp = dataOp.getJobs();
+        $scope.items = temp.objects;
         $scope.submit = function ($event) {
             var in_data = { name: $scope.name, description: $scope.description };
             $scope.jobs;
-            addJob(in_data)
+            dataOp.addJob(in_data)
             .success(function (myjobs) {
-                $scope.jobs = myjobs;
-                $scope.items = $scope.jobs.objects; // вывод в таблицу
+                //$scope.jobs = myjobs;
+                //$scope.items = $scope.jobs.objects; // вывод в таблицу
+                $scope.items = JobsDataOp.getJobs().objects;
                 $scope.name = '';
                 $scope.description = '';
             })
