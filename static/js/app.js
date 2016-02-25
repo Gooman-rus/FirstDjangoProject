@@ -22,7 +22,7 @@ var myApp = angular.module('myApp', [
             return $scope.items;
         };
         function addJob(newjob) {
-            return $http.post(urlBase + '/v1/job/', newjob);
+            return $http.post('api/v1/job/', newjob);
         };
 
         getJobs();
