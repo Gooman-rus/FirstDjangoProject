@@ -31,15 +31,14 @@ var myApp = angular.module('myApp', [
         $urlRouterProvider.otherwise('/');
     }])
 
-    .controller('JobFormCtrl', function($scope, $timeout, dataOp) {
+    .controller('JobFormCtrl', function($scope) {
         $scope.submit = function ($event) {
             var in_data = { name: $scope.name, description: $scope.description };
             $scope.jobs;
-            dataOp.addJob(in_data)
+            addJob(in_data)
             .success(function (myjobs) {
                 $scope.jobs = myjobs;
                 $scope.items = $scope.jobs.objects; // вывод в таблицу
-                //dataOp.applyJobs($scope, myjobs);
                 $scope.name = '';
                 $scope.description = '';
             })
