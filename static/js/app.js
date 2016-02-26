@@ -17,18 +17,15 @@ var myApp = angular.module('myApp', [
                 controller: 'JobFormCtrl'
             });
 
-
-
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/');
     }])
 
     .factory('dataOp', ['$http', function ($http) {
-        var urlBase = 'http://localhost:8000/api';
+        var urlBase = '/api';
         var dataOp = {};
 
         dataOp.getJobs = function () {
-            console.log($http.get(urlBase + '/v1/job/'));
             return $http.get(urlBase + '/v1/job/');
         };
         dataOp.addJob = function (newjob) {
@@ -39,16 +36,34 @@ var myApp = angular.module('myApp', [
     }])
 
     .controller('JobFormCtrl', function($scope, dataOp) {
-        var temp = dataOp.getJobs();
-        $scope.items = temp.objects;
+        dataOp.getJobs()
+            .success(function (jobs) {
+                $scope.items = jobs.objects;
+                console.log(jobs);
+            })
+            .error(function (error) {
+                $scope.status = 'Unable to load customer data: ' + error.message;
+            });
+        $scope.toggleAll = function() {
+            var toggleStatus = !$scope.isAllSelected;
+            angular.forEach($scope.options, function(itm){ itm.selected = toggleStatus; });
+        }
+        $scope.optionToggled = function(){
+            $scope.isAllSelected = $scope.options.every(function(itm){ return itm.selected; })
+        }
         $scope.submit = function ($event) {
-            var in_data = { name: $scope.name, description: $scope.description };
-            $scope.jobs;
-            dataOp.addJob(in_data)
+        var in_data = { name: $scope.name, description: $scope.description };
+        $scope.jobs;
+        dataOp.addJob(in_data)
             .success(function (myjobs) {
-                //$scope.jobs = myjobs;
-                //$scope.items = $scope.jobs.objects; // вывод в таблицу
-                $scope.items = dataOp.getJobs().objects;
+                dataOp.getJobs()
+                    .success(function (jobs) {
+                        $scope.items = jobs.objects;
+                        console.log(jobs);
+                    })
+                    .error(function (error) {
+                        $scope.status = 'Unable to load customer data: ' + error.message;
+                    });
                 $scope.name = '';
                 $scope.description = '';
             })

@@ -4,14 +4,16 @@
     <table class="table table-hover table-condensed">
         <thead>
             <tr>
-                <th class="vcenter"><input type="checkbox" class="check" /></th>
+                <th class="vcenter"><input type="checkbox" class="check"
+                                           ng-click="toggleAll()" ng-model="isAllSelected" /></th>
                 <th>Name</th>
                 <th>Description</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="x in items">
-                <td class="vcenter"><input type="checkbox" class="check" value="{{ x.id }}" /></td>
+                <td class="vcenter"><input type="checkbox" class="check" value="{{ x.id }}"
+                                           ng-model="x.selected" ng-change="optionToggled()" /></td>
                 <td>{{ x.name }}</td>
                 <td>{{ x.description }}</td>
             </tr>
