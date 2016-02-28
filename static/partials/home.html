@@ -4,18 +4,30 @@
     <table class="table table-hover table-condensed">
         <thead>
             <tr>
-                <th class="vcenter"><input type="checkbox" class="check"
-                                           ng-click="toggleAll()" ng-model="isAllSelected" /></th>
+                <th class="vcenter"><input type="checkbox" class="check" /></th>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Description</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="x in items">
-                <td class="vcenter"><input type="checkbox" class="check" value="{{ x.id }}"
-                                           ng-model="x.selected" ng-change="optionToggled()" /></td>
-                <td>{{ x.name }}</td>
+                <td class="vcenter"><input type="checkbox" class="check" value="{{ x.id }}" ng-model="x.selected" /></td>
+                <th>{{ x.id }}</th>
+                <td>
+                    <div ng-hide="editingData[x.id]">{{ x.name }}</div>
+                    <div ng-show="editingData[x.id]"><input type="text" ng-model="x.name"></div>
+                </td>
                 <td>{{ x.description }}</td>
+                <td>
+                    <a href="#" ng-hide="editingData[x.id]" ng-click="modify(x)"><span class="glyphicon glyphicon-pencil"></span></a>
+                    <button ng-show="editingData[x.id]" ng-click="update(x)" class="btn btn-info">
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </button>
+                    <button ng-show="editingData[x.id]" ng-click="modify(x)" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                </td>
             </tr>
         </tbody>
     </table>

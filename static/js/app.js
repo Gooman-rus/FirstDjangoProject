@@ -41,24 +41,20 @@ var myApp = angular.module('myApp', [
         $scope.getJobs = function () {
             dataOp.getJobs()
                 .success(function (jobs) {
-                $scope.items = jobs.objects;
-                console.log(jobs);
+                    $scope.items = jobs.objects;
+                    console.log(jobs);
                 })
                 .error(function (error) {
-                $scope.status = 'Unable to load customer data: ' + error.message;
+                    $scope.status = 'Unable to load customer data: ' + error.message;
                 });
         }
         $scope.getJobs();
-//        $scope.toggleAll = function() {
-//            var toggleStatus = !$scope.isAllSelected;
-//            angular.forEach($scope.options, function(itm){ itm.selected = toggleStatus; });
-//        }
-//        $scope.optionToggled = function() {
-//            $scope.isAllSelected = $scope.options.every(function(itm){ return itm.selected; })
-//        }
         $scope.submit = function ($event) {
             var in_data = { name: $scope.name, description: $scope.description };
-            $scope.jobs;
+            if ($scope.name === '' && $scope.description === '') {
+                console.log('empty input');
+                return;
+            }
             dataOp.addJob(in_data)
                 .success(function (myjobs) {
                     $scope.getJobs();
@@ -75,15 +71,25 @@ var myApp = angular.module('myApp', [
                 if (items.selected)
                     $scope.selectedJobs.push(items.id);
             });
+            if ($scope.selectedJobs.length == 0)
+                return;
             console.log($scope.selectedJobs);
             angular.forEach($scope.selectedJobs, function (selectedJob) {
                 dataOp.deleteJob(selectedJob)
                     .success(function (response) {
+                        $scope.getJobs();
                     })
                     .error(function (error) {
                         $scope.status = 'Unable to delete customer data: ' + error.message;
                     })
             });
-            $scope.getJobs();
+        }
+        $scope.modify = function(x) {
+            $scope.editingData = {};
+            if (!$scope.editingData[x.id])
+                $scope.editingData[x.id] = true;
+            else
+                $scope.editingData[x.id] = false;
+
         }
     });
