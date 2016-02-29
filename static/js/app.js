@@ -24,7 +24,6 @@ var myApp = angular.module('myApp', [
     .factory('dataOp', ['$http', function ($http) {
         var urlBase = '/api';
         var dataOp = {};
-
         dataOp.getJobs = function () {
             return $http.get(urlBase + '/v1/job/');
         };
@@ -33,6 +32,9 @@ var myApp = angular.module('myApp', [
         };
         dataOp.deleteJob = function (id) {
             return $http.delete(urlBase + '/v1/job/' + id);
+        }
+        dataOp.updateJob = function(id, upJob) {
+            return $http.patch(urlBase + '/v1/job/' + id + '/', upJob);
         }
         return dataOp;
     }])
@@ -45,7 +47,7 @@ var myApp = angular.module('myApp', [
                     console.log(jobs);
                 })
                 .error(function (error) {
-                    $scope.status = 'Unable to load customer data: ' + error.message;
+                    $scope.status = 'Unable to LOAD customer data: ' + error.message;
                 });
         }
         $scope.getJobs();
@@ -62,7 +64,7 @@ var myApp = angular.module('myApp', [
                     $scope.description = '';
                 })
                 .error(function (error) {
-                    $scope.status = 'Unable to submit customer data: ' + error.message;
+                    $scope.status = 'Unable to SUBMIT customer data: ' + error.message;
                 });
         }
         $scope.deleteJobs = function () {
@@ -80,16 +82,27 @@ var myApp = angular.module('myApp', [
                         $scope.getJobs();
                     })
                     .error(function (error) {
-                        $scope.status = 'Unable to delete customer data: ' + error.message;
+                        $scope.status = 'Unable to DELETE customer data: ' + error.message;
                     })
             });
         }
+        $scope.editingData = {};
         $scope.modify = function(x) {
-            $scope.editingData = {};
             if (!$scope.editingData[x.id])
                 $scope.editingData[x.id] = true;
             else
                 $scope.editingData[x.id] = false;
-
+        }
+        $scope.update = function(x) {
+            $scope.editingData[x.id] = false;
+            var upJob = { name: x.name, description: x.description };
+            dataOp.updateJob(x.id, upJob)
+                .success(function (response) {
+                        $scope.getJobs();
+                        console.log(response);
+                    })
+                    .error(function (error) {
+                        $scope.status = 'Unable to UPDATE customer data: ' + error.message;
+                    })
         }
     });

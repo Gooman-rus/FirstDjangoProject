@@ -13,12 +13,15 @@
         <tbody>
             <tr ng-repeat="x in items">
                 <td class="vcenter"><input type="checkbox" class="check" value="{{ x.id }}" ng-model="x.selected" /></td>
-                <th>{{ x.id }}</th>
+                <td>{{ x.id }}</td>
                 <td>
                     <div ng-hide="editingData[x.id]">{{ x.name }}</div>
                     <div ng-show="editingData[x.id]"><input type="text" ng-model="x.name"></div>
                 </td>
-                <td>{{ x.description }}</td>
+                <td>
+                    <div ng-hide="editingData[x.id]">{{ x.description }}</div>
+                    <div ng-show="editingData[x.id]"><input type="text" ng-model="x.description"></div>
+                </td>
                 <td>
                     <a href="#" ng-hide="editingData[x.id]" ng-click="modify(x)"><span class="glyphicon glyphicon-pencil"></span></a>
                     <button ng-show="editingData[x.id]" ng-click="update(x)" class="btn btn-info">
